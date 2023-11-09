@@ -4,10 +4,10 @@ import { SearchManufacturer } from "./";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 
-const SearchButton = ({otherClasses}:{otherClasses:string}) =>{
-    <button 
+const SearchButton = ({ otherClasses }: {otherClasses:string}) =>{
+    return (<button 
         type="submit"
-        className={` -ml-3 z-10 ${otherClasses}`}>
+        className={`-ml-3 z-10 ${otherClasses}`}>
             <Image 
                 src="/magnifying-glass.svg"
                 alt="maginifying glass"
@@ -15,7 +15,7 @@ const SearchButton = ({otherClasses}:{otherClasses:string}) =>{
                 height={40}
                 className="object-contain"
             />
-        </button>
+        </button>)
 }
 
 const SearchBar =()=>{
@@ -87,7 +87,7 @@ const SearchBar =()=>{
                 <SearchButton otherClasses="sm:hidden" />
             </div>
             <SearchButton otherClasses="max-sm:hidden" />
-        </form>
+        </form> 
     )
 }
 
