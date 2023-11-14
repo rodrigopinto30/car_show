@@ -1,17 +1,50 @@
-import { CustomFilter, Hero, SearchBar, CarCard } from '@/components'
+'use client';
+import React from 'react';
+import { CustomFilter, Hero, SearchBar, CarCard, ShowMore } from '@/components'
 import { fuels, yearsOfProduction } from '@/constansts';
 import { fetchCars } from '@/utils'
 import Image from 'next/image'
 
-export default async function Home({searchParams}) {
+export default function Home() {
+  
+  const [allCars, setAllCars] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
-  const allCars = await fetchCars({
-    manufacturer: searchParams.manufacturer || '',
-    year: searchParams.year || 2022,
-    fuel: searchParams.fuel || '',
-    limit: searchParams.limit || 10,
-    model: searchParams.model || '',
-  });
+  // Search states
+  const [manufacturer, setManufacturer] = React.useState("");
+  const [model, setModel] = React.useState("");
+
+  // Filter states
+  const [fuel, setFuel] = React.useState("");
+  const [year, setYear] = React.useState(202);
+
+  // Paginacion states
+  const [limit, setLimit] = React.useState(10);
+
+  const getCars = async () =>{
+    
+    setLoading(true);
+    
+    try {
+      const result = await fetchCars({
+        manufacturer: manufacturer || '',
+        year: year || 2022,
+        fuel: fuel || '',
+        limit: limit || 10,
+        model: model || '',
+      });
+      setAllCars(result);
+
+    } catch (error) {
+      console.log(error)
+    } finally{
+      setLoading(false)
+    }
+  }
+
+  React.useEffect(()=>{
+    getCars();
+  },[fuel, year, limit, manufacturer, model])
 
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
 
@@ -43,6 +76,12 @@ export default async function Home({searchParams}) {
                 <CarCard car={car} />
               ))}
             </div>
+
+            <ShowMore 
+              pageNumber={(searchParams.limit || 10) / 10}
+              isNext={(searchParams.limit || 10) > allCars.length}
+            />
+
           </section> 
         ): (
           <div className='home__error-container'>
@@ -50,6 +89,8 @@ export default async function Home({searchParams}) {
             <p>{allCars?.message}</p>
           </div>
         )}
+
+
 
       </div>
     </main>
